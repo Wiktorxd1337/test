@@ -25,8 +25,16 @@ app.post('/create-checkout-session', async (req, res) => {
       cancel_url: 'https://stripe-tau-ashy.vercel.app/cancel.html', // Zastąp swoją domeną frontendu
     });
 
-    res.json({ id: session.id });
+    // Zwróć zarówno id, jak i url sesji
+    res.json({ id: session.id, url: session.url });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Uruchomienie serwera
+const PORT = process.env.PORT || 4242;
+app.listen(PORT, () => console.log(`Serwer działa na porcie ${PORT}`));
+
+// Eksportuj serwer dla Vercel
+module.exports = app;
