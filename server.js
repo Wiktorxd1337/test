@@ -28,16 +28,18 @@ app.post('/create-checkout-session', async (req, res) => {
 
     // Tworzenie sesji płatności Stripe
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card', 'blik', 'p24'],
-      line_items: lineItems,
-      mode: 'payment',
-      success_url: successUrl,
-      cancel_url: cancelUrl,
-      shipping_address_collection: {
-        allowed_countries: allowedCountries,
-      },
-    });
-
+     payment_method_types: ['card', 'blik', 'p24'],  // Obsługiwane metody płatności
+  line_items: lineItems,  // Lista produktów w koszyku
+  mode: 'payment',  // Tryb płatności
+  success_url: successUrl,  // URL przekierowania po udanej płatności
+  cancel_url: cancelUrl,  // URL przekierowania po anulowaniu płatności
+  shipping_address_collection: {
+    allowed_countries: allowedCountries,  // Dozwolone kraje do dostawy
+  },
+  phone_number_collection: {
+    enabled: true,  // Włącz zbieranie numerów telefonów
+  },
+});
     // Zwróć zarówno id, jak i url sesji
     res.json({ id: session.id, url: session.url });
   } catch (error) {
