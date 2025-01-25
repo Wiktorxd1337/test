@@ -31,8 +31,8 @@ app.post('/create-checkout-session', async (req, res) => {
      payment_method_types: ['card', 'blik', 'p24'],  // Obsługiwane metody płatności
   line_items: lineItems,  // Lista produktów w koszyku
   mode: 'payment',  // Tryb płatności
-  success_url: successUrl,  // URL przekierowania po udanej płatności
-  cancel_url: cancelUrl,  // URL przekierowania po anulowaniu płatności
+  success_url: 'https://kielbasnik.com/dziekujemy',  // URL przekierowania po udanej płatności
+  cancel_url: 'https://kielbasnik.com/sklep-kielbasnik',  // URL przekierowania po anulowaniu płatności
   shipping_address_collection: {
     allowed_countries: allowedCountries,  // Dozwolone kraje do dostawy
   },
