@@ -6,7 +6,8 @@ const app = express();
 // Użyj middleware CORS
 app.use(cors({
   origin: 'https://kielbasnik.com', // Zezwól na żądania z tej domeny
-  methods: ['POST'], // Zezwól tylko na żądania POST
+  methods: ['POST', 'OPTIONS'], // Zezwól na żądania POST i OPTIONS (preflight)
+  allowedHeaders: ['Content-Type'], // Zezwól na nagłówek Content-Type
 }));
 
 // Middleware do parsowania JSON
