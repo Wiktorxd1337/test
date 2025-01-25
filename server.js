@@ -1,6 +1,13 @@
 const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const cors = require('cors'); // Importuj middleware CORS
 const app = express();
+
+// Użyj middleware CORS
+app.use(cors({
+  origin: 'https://kielbasnik.com', // Zezwól na żądania z tej domeny
+  methods: ['POST'], // Zezwól tylko na żądania POST
+}));
 
 // Middleware do parsowania JSON
 app.use(express.json());
