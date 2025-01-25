@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Buy cool new product</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://js.stripe.com/v3/"></script>
+  </head>
+  <body>
+    <section>
+      <div class="product">
+        <img src="https://i.imgur.com/EHyR2nP.png" alt="The cover of Stubborn Attachments" />
+        <div class="description">
+          <h3>Stubborn Attachments</h3>
+          <h5>$20.00</h5>
+        </div>
+      </div>
+      <button id="checkout-button">Checkout</button>
+    </section>
+
+    <script>
+      // Inicjalizacja Stripe z kluczem publicznym
+      const stripe = Stripe('pk_test_51Q8MRNGgU76qWzUhtwgrKkn0nMDk3EjqHsN4y8PBib5f1MbkznOB6NJVB7T69G8A8NbHKfTq245eZiqpZNlC94uJ009pfHgyKf'); // Użyj klucza testowego
+
+      // Obsługa kliknięcia przycisku "Checkout"
+      const checkoutButton = document.getElementById('checkout-button');
+      checkoutButton.addEventListener('click', async () => {
+        try {
+          // Wysyłanie żądania POST do backendu
+          const response = await fetch('/create-checkout-session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          const session = await response.json();
+          console.log('Odpowiedź z backendu:', session); // Logowanie do konsoli
+
+          // Przekierowanie do Stripe Checkout
+          const { error } = await stripe.redirectToCheckout({
+            sessionId: session.id,
+          });
+
+          if (error) {
+            throw new Error(error.message);
+          }
+        } catch (error) {
+          console.error('Błąd:', error);
+          alert('Wystąpił błąd podczas tworzenia sesji płatności: ' + error.message);
+        }
+      });
+    </script>
+  </body>
+</html>
