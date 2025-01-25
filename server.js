@@ -2,6 +2,9 @@ const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const app = express();
 
+// Middleware do parsowania JSON
+app.use(express.json());
+
 // Serwowanie statycznych plików (np. HTML, CSS, JS)
 app.use(express.static('public'));
 
@@ -13,16 +16,18 @@ app.get('/', (req, res) => {
 // Endpoint do tworzenia sesji płatności Stripe
 app.post('/create-checkout-session', async (req, res) => {
   try {
+    const { lineItems, successUrl, cancelUrl, allowedCountries } = req.body;
+
+    // Tworzenie sesji płatności Stripe
     const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price: 'price_1QdaCgGgU76qWzUhu1w41Tsx', // Zastąp rzeczywistym Price ID z Stripe
-          quantity: 1,
-        },
-      ],
+      payment_method_types: ['card'],
+      line_items: lineItems,
       mode: 'payment',
-      success_url: 'https://stripe-tau-ashy.vercel.app/success.html', // Zastąp swoją domeną frontendu
-      cancel_url: 'https://stripe-tau-ashy.vercel.app/cancel.html', // Zastąp swoją domeną frontendu
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      shipping_address_collection: {
+        allowed_countries: allowedCountries,
+      },
     });
 
     // Zwróć zarówno id, jak i url sesji
