@@ -34,7 +34,7 @@
           });
 
           const session = await response.json();
-          console.log('Odpowiedź z backendu:', session); // Logowanie do konsoli
+          console.log('Odpowiedź z backendu:', session); // Logowanie odpowiedzi
 
           // Przekierowanie do Stripe Checkout
           const { error } = await stripe.redirectToCheckout({
