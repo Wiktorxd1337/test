@@ -39,7 +39,6 @@ app.post('/create-checkout-session', async (req, res) => {
   phone_number_collection: {
     enabled: true,  // Włącz zbieranie numerów telefonów
   },
-      
  shipping_options: [
     {
       shipping_rate_data: {
