@@ -132,6 +132,7 @@ app.post('/create-checkout-session', async (req, res) => {
     },
   },
 ],
+});
 
     // Zwróć zarówno id, jak i url sesji
     res.json({ id: session.id, url: session.url });
