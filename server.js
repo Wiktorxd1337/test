@@ -40,7 +40,7 @@ app.post('/create-checkout-session', async (req, res) => {
     enabled: true,  // Włącz zbieranie numerów telefonów
   },
       
-  shipping_options: [
+ shipping_options: [
     {
       shipping_rate_data: {
         type: 'fixed_amount',
@@ -101,8 +101,27 @@ app.post('/create-checkout-session', async (req, res) => {
         },
       },
     },
+    {
+      shipping_rate_data: {
+        type: 'fixed_amount',
+        fixed_amount: {
+          amount: 2300, // 23 PLN (kwota w groszach)
+          currency: 'pln', // Waluta w PLN
+        },
+        display_name: 'Dostawa za pobraniem', // Opcja 4: Dostawa za pobraniem
+        delivery_estimate: {
+          minimum: {
+            unit: 'business_day',
+            value: 3, // Minimalny czas dostawy: 3 dni robocze
+          },
+          maximum: {
+            unit: 'business_day',
+            value: 5, // Maksymalny czas dostawy: 5 dni roboczych
+          },
+        },
+      },
+    },
   ],
-});
     // Zwróć zarówno id, jak i url sesji
     res.json({ id: session.id, url: session.url });
   } catch (error) {
