@@ -6,8 +6,9 @@ const app = express();
 // Użyj middleware CORS
 app.use(cors({
   origin: 'https://kielbasnik.com', // Zezwól na żądania z tej domeny
-  methods: ['POST', 'OPTIONS'], // Zezwól na żądania POST i OPTIONS (preflight)
-  allowedHeaders: ['Content-Type'], // Zezwól na nagłówek Content-Type
+  methods: ['GET', 'POST', 'OPTIONS'], // Zezwól na żądania POST i OPTIONS (preflight)
+  allowedHeaders: ['Content-Type', 'Authorization'], // Zezwól na nagłówek Content-Type
+  credentials: true, // Włącz, jeśli używasz ciasteczek lub nagłówków autoryzacyjnych
 }));
 
 // Middleware do parsowania JSON
@@ -21,6 +22,14 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/checkout.html'); // Zwróć plik HTML
 });
 
+// Obsługa żądania OPTIONS (preflight)
+app.options('/create-checkout-session', (req, res) => {
+  res.header('Access-Control-Allow-Origin', 'https://kielbasnik.com');
+  res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.send();
+});
+
 // Endpoint do tworzenia sesji płatności Stripe
 app.post('/create-checkout-session', async (req, res) => {
   try {
@@ -28,21 +37,23 @@ app.post('/create-checkout-session', async (req, res) => {
 
     // Tworzenie sesji płatności Stripe
     const session = await stripe.checkout.sessions.create({
-     payment_method_types: ['card', 'blik', 'p24'],  // Obsługiwane metody płatności
-  line_items: lineItems,  // Lista produktów w koszyku
-  mode: 'payment',  // Tryb płatności
-  success_url: 'https://kielbasnik.com/dziekujemy',  // URL przekierowania po udanej płatności
-  cancel_url: 'https://kielbasnik.com/sklep-kielbasnik',  // URL przekierowania po anulowaniu płatności
-  shipping_address_collection: {
-    allowed_countries: allowedCountries,  // Dozwolone kraje do dostawy
-  },
-  phone_number_collection: {
-    enabled: true,  // Włącz zbieranie numerów telefonów
-  },
+      payment_method_types: ['card', 'blik', 'p24'],  // Obsługiwane metody płatności
+      line_items: lineItems,  // Lista produktów w koszyku
+      mode: 'payment',  // Tryb płatności
+      success_url: successUrl || 'https://kielbasnik.com/dziekujemy',  // URL przekierowania po udanej płatności
+      cancel_url: cancelUrl || 'https://kielbasnik.com/sklep-kielbasnik',  // URL przekierowania po anulowaniu płatności
+      shipping_address_collection: {
+        allowed_countries: allowedCountries || ['PL'],  // Dozwolone kraje do dostawy (domyślnie Polska)
+      },
+      phone_number_collection: {
+        enabled: true,  // Włącz zbieranie numerów telefonów
+      },
+    });
 
     // Zwróć zarówno id, jak i url sesji
     res.json({ id: session.id, url: session.url });
   } catch (error) {
+    console.error('Błąd podczas tworzenia sesji płatności:', error);
     res.status(500).json({ error: error.message });
   }
 });
