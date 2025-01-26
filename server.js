@@ -39,6 +39,69 @@ app.post('/create-checkout-session', async (req, res) => {
   phone_number_collection: {
     enabled: true,  // Włącz zbieranie numerów telefonów
   },
+        },
+  shipping_options: [
+    {
+      shipping_rate_data: {
+        type: 'fixed_amount',
+        fixed_amount: {
+          amount: 2000, // 20 PLN (kwota w groszach)
+          currency: 'pln', // Waluta w PLN
+        },
+        display_name: 'Dostawa kurierem', // Opcja 1: Dostawa kurierem
+        delivery_estimate: {
+          minimum: {
+            unit: 'business_day',
+            value: 3, // Minimalny czas dostawy: 3 dni robocze
+          },
+          maximum: {
+            unit: 'business_day',
+            value: 5, // Maksymalny czas dostawy: 5 dni roboczych
+          },
+        },
+      },
+    },
+    {
+      shipping_rate_data: {
+        type: 'fixed_amount',
+        fixed_amount: {
+          amount: 1800, // 18 PLN (kwota w groszach)
+          currency: 'pln', // Waluta w PLN
+        },
+        display_name: 'Dostawa do paczkomatu', // Opcja 2: Dostawa do paczkomatu
+        delivery_estimate: {
+          minimum: {
+            unit: 'business_day',
+            value: 2, // Minimalny czas dostawy: 2 dni robocze
+          },
+          maximum: {
+            unit: 'business_day',
+            value: 4, // Maksymalny czas dostawy: 4 dni robocze
+          },
+        },
+      },
+    },
+    {
+      shipping_rate_data: {
+        type: 'fixed_amount',
+        fixed_amount: {
+          amount: 0, // Darmowy odbiór osobisty
+          currency: 'pln', // Waluta w PLN
+        },
+        display_name: 'Odbiór osobisty', // Opcja 3: Odbiór osobisty
+        delivery_estimate: {
+          minimum: {
+            unit: 'business_day',
+            value: 1, // Minimalny czas: 1 dzień roboczy
+          },
+          maximum: {
+            unit: 'business_day',
+            value: 1, // Maksymalny czas: 1 dzień roboczy
+          },
+        },
+      },
+    },
+  ],
 });
     // Zwróć zarówno id, jak i url sesji
     res.json({ id: session.id, url: session.url });
